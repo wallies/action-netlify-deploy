@@ -1,4 +1,4 @@
-FROM node:current-stretch
+FROM node:lts-stretch
 
 ADD entrypoint.sh /entrypoint.sh
 ADD action.yml /action.yml
