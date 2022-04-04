@@ -31,11 +31,9 @@ BUILD_COMMAND=$7
 DEPLOY_ALIAS=$8
 
 # Install dependencies
-if [[ -n $INSTALL_COMMAND ]]
-then
+if [[ -n $INSTALL_COMMAND ]]; then
 	eval $INSTALL_COMMAND
-elif [[ -f yarn.lock ]]
-then
+elif [[ -f yarn.lock ]]; then
 	yarn
 else
 	npm i
