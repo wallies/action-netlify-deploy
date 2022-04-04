@@ -53,7 +53,7 @@ elif [[ -f yarn.lock ]]; then
 	yarn
 else
 	echo "Installing dependencies via npm"
-	npm i
+	npm i --verbose
 fi
 
 # Build project
