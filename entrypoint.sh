@@ -65,11 +65,9 @@ export NETLIFY_AUTH_TOKEN="$NETLIFY_AUTH_TOKEN"
 
 COMMAND="$NETLIFY_CLI deploy --dir=$BUILD_DIRECTORY --functions=$FUNCTIONS_DIRECTORY --message=\"$INPUT_NETLIFY_DEPLOY_MESSAGE\""
 
-if [[ $NETLIFY_DEPLOY_TO_PROD == "true" ]]
-then
+if [[ $NETLIFY_DEPLOY_TO_PROD == "true" ]]; then
 	COMMAND+=" --prod"
-elif [[ -n $DEPLOY_ALIAS ]]
-then
+elif [[ -n $DEPLOY_ALIAS ]]; then
 	COMMAND+=" --alias $DEPLOY_ALIAS"
 fi
 
