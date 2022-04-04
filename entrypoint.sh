@@ -8,19 +8,6 @@ npm i -g netlify-cli
 # Save its exec path to run later
 NETLIFY_CLI=$(which netlify)
 
-# Install node from NVM to honor .nvmrc files
-if [[ -n $9 ]] || [[ -e ".nvmrc" ]]; then
-	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | bash
-	[ -s "$HOME/.nvm/nvm.sh" ] && \. "$HOME/.nvm/nvm.sh"
-
-	nvm install "$9"
-	if [[ -n $9 ]]; then
-		nvm install "$9"
-	else
-		nvm install
-	fi
-fi
-
 NETLIFY_AUTH_TOKEN=$1
 NETLIFY_SITE_ID=$2
 NETLIFY_DEPLOY_TO_PROD=$3
@@ -30,9 +17,36 @@ INSTALL_COMMAND=$6
 BUILD_COMMAND=$7
 DEPLOY_ALIAS=$8
 
+# Install node from NVM to honor .nvmrc files
+if [[ -n "$node_version" ]] || [[ -e ".nvmrc" ]]; then
+	echo "Installing NVM"
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+	export NVM_DIR="$HOME/.nvm"
+	[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+	if which node > /dev/null; then
+		INSTALLED_NODE=$(node --version)
+	fi
+
+	if [[ -n "$node_version" ]]; then
+		echo "Installing Node from node_version"
+		nvm install "$node_version"
+	elif [[ -e ".nvmrc" ]]; then
+		NVMRC_NODE=$(cat .nvmrc)
+		if [[ "$INSTALLED_NODE" == "$NVMRC_NODE" ]]; then
+			echo "Installed node and nvmrc node are the same, using installed version"
+			nvm use
+		else
+			echo "Installing Node from .nvmrc"
+			nvm use
+			nvm install
+		fi
+	fi
+fi
+
+
 # Install dependencies
-if [[ -n $INSTALL_COMMAND ]]; then
-	eval $INSTALL_COMMAND
+if [[ -n "$INSTALL_COMMAND" ]]; then
+	eval "$INSTALL_COMMAND"
 elif [[ -f yarn.lock ]]; then
 	yarn
 else
@@ -40,7 +54,7 @@ else
 fi
 
 # Build project
-eval ${BUILD_COMMAND:-"npm run build"}
+eval "${BUILD_COMMAND:-'npm run build'}"
 
 # Export token to use with netlify's cli
 export NETLIFY_SITE_ID="$NETLIFY_SITE_ID"
@@ -59,7 +73,7 @@ fi
 # Deploy with netlify
 OUTPUT=$(sh -c "$COMMAND")
 
-NETLIFY_OUTPUT=$(echo "$OUTPUT")
+NETLIFY_OUTPUT=$("$OUTPUT")
 NETLIFY_PREVIEW_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*(--)[a-zA-Z0-9./?=_-]*') #Unique key: --
 NETLIFY_LOGS_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://app.netlify.com/[a-zA-Z0-9./?=_-]*') #Unique key: app.netlify.com
 NETLIFY_LIVE_URL=$(echo "$OUTPUT" | grep -Eo '(http|https)://[a-zA-Z0-9./?=_-]*' | grep -Eov "netlify.com") #Unique key: don't containr -- and app.netlify.com
