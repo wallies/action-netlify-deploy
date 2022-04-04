@@ -46,10 +46,13 @@ fi
 
 # Install dependencies
 if [[ -n "$INSTALL_COMMAND" ]]; then
+	echo "Installing dependencies via $INSTALL_COMMAND"
 	eval "$INSTALL_COMMAND"
 elif [[ -f yarn.lock ]]; then
+	echo "Installing dependencies via yarn lockfile"
 	yarn
 else
+	echo "Installing dependencies via npm"
 	npm i
 fi
 
