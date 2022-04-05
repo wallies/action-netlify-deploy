@@ -37,8 +37,8 @@ if [[ -n "$node_version" ]] || [[ -e ".nvmrc" ]]; then
 			nvm use
 		else
 			echo "Installing Node from .nvmrc"
-			nvm use
 			nvm install "$NVMRC_NODE"
+			nvm use
 		fi
 	fi
 fi
