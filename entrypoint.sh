@@ -27,13 +27,6 @@ else
   npm i
 fi
 
-# Run build command
-if [[ -n "${BUILD_COMMAND}" ]]; then
-  ${BUILD_COMMAND}
-else
-  npm run build
-fi
-
 # Build project
 eval ${BUILD_COMMAND:-"npm run build"}
 
